@@ -121,7 +121,7 @@ class Robot:
     def getLineFollowSensorValue(self):
         return GPIO.input(Robot.PIN_LINE_FOLLOWER)
 
-    def lineFollowerOnBlack(self):
+    def isLineFollowSensorOnBlack(self):
         return self.getLineFollowSensorValue() == 0
 
     #
@@ -132,7 +132,7 @@ class Robot:
       # Set trigger to False (Low)
       GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
       # Allow module to settle
-      time.sleep(0.5)
+      time.sleep(0.1)
       # Send 10us pulse to trigger
       GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, True)
       time.sleep(0.00001)
