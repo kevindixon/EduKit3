@@ -63,14 +63,14 @@ class Robot:
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
-    def forwards():
+    def forwards(self):
         # Turn both motors forwards
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
-    def backwards():
+    def backwards(self):
         # Turn both motors backwards
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
@@ -84,7 +84,7 @@ class Robot:
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
-    def right():
+    def right(self):
         # Turn Right
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
