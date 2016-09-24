@@ -114,14 +114,14 @@ except KeyboardInterrupt:
 # Ultrasonic
 #
 
-# Define GPIO pins to use on the Pi
+'''# Define GPIO pins to use on the Pi
 pinTrigger = 17
 pinEcho = 18
 print("Ultrasonic Measurement")
 # Set pins as output and input
 GPIO.setup(pinTrigger, GPIO.OUT) # Trigger
 GPIO.setup(pinEcho, GPIO.IN) # Echo
-'''
+
 try:
   # Repeat the next indented block forever
   while True:
