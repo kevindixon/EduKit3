@@ -15,49 +15,75 @@ pinMotorABackwards = 9
 pinMotorBForwards = 7
 pinMotorBBackwards = 8
 
+# How many times to turn the pin on and off each second
+Frequency = 20
+# How long the pin stays on each cycle, as a percent
+DutyCycleA = 30
+DutyCycleB = 30
+# Setting the duty cycle to 0 means the motors will not turn
+Stop = 0
+
 # Set the GPIO Pin mode
 GPIO.setup(pinMotorAForwards, GPIO.OUT)
 GPIO.setup(pinMotorABackwards, GPIO.OUT)
 GPIO.setup(pinMotorBForwards, GPIO.OUT)
 GPIO.setup(pinMotorBBackwards, GPIO.OUT)
 
-def forward():
-     GPIO.output(pinMotorAForwards, 1)
-     GPIO.output(pinMotorABackwards, 0)
-     GPIO.output(pinMotorBForwards, 1)
-     GPIO.output(pinMotorBBackwards, 0)
+# Set the GPIO to software PWM at 'Frequency' Hertz
+pwmMotorAForwards = GPIO.PWM(pinMotorAForwards, Frequency)
+pwmMotorABackwards = GPIO.PWM(pinMotorABackwards, Frequency)
+pwmMotorBForwards = GPIO.PWM(pinMotorBForwards, Frequency)
+pwmMotorBBackwards = GPIO.PWM(pinMotorBBackwards, Frequency)
 
-def back():
-     GPIO.output(pinMotorAForwards, 0)
-     GPIO.output(pinMotorABackwards, 1)
-     GPIO.output(pinMotorBForwards, 0)
-     GPIO.output(pinMotorBBackwards, 1)
+# Start the software PWM with a duty cycle of 0 (i.e. not moving)
+pwmMotorAForwards.start(Stop)
+pwmMotorABackwards.start(Stop)
+pwmMotorBForwards.start(Stop)
+pwmMotorBBackwards.start(Stop)
 
-def stop():
-     GPIO.output(pinMotorAForwards, 0)
-     GPIO.output(pinMotorABackwards, 0)
-     GPIO.output(pinMotorBForwards, 0)
-     GPIO.output(pinMotorBBackwards, 0)
+# Turn all motors off
+def StopMotors():
+  pwmMotorAForwards.ChangeDutyCycle(Stop)
+  pwmMotorABackwards.ChangeDutyCycle(Stop)
+  pwmMotorBForwards.ChangeDutyCycle(Stop)
+  pwmMotorBBackwards.ChangeDutyCycle(Stop)
 
-def spinleft():
-     GPIO.output(9,1)
-     GPIO.output(10,0)
-     GPIO.output(7,1)
-     GPIO.output(8,0)
+# Turn both motors forwards
+def Forwards():
+  pwmMotorAForwards.ChangeDutyCycle(DutyCycleA)
+  pwmMotorABackwards.ChangeDutyCycle(Stop)
+  pwmMotorBForwards.ChangeDutyCycle(DutyCycleB)
+  pwmMotorBBackwards.ChangeDutyCycle(Stop)
 
-def left():
-     GPIO.output(9,1)
-     GPIO.output(10,0)
-     GPIO.output(7,0)
-     GPIO.output(8,0)
+# Turn both motors backwards
+def Backwards():
+  pwmMotorAForwards.ChangeDutyCycle(Stop)
+  pwmMotorABackwards.ChangeDutyCycle(DutyCycleA)
+  pwmMotorBForwards.ChangeDutyCycle(Stop)
+  pwmMotorBBackwards.ChangeDutyCycle(DutyCycleB)
 
-def spinright():
-     GPIO.output(9,0)
-     GPIO.output(10,1)
-     GPIO.output(7,0)
-     GPIO.output(8,1)
+# Turn left
+def Left():
+  pwmMotorAForwards.ChangeDutyCycle(Stop)
+  pwmMotorABackwards.ChangeDutyCycle(DutyCycleA)
+  pwmMotorBForwards.ChangeDutyCycle(DutyCycleB)
+  pwmMotorBBackwards.ChangeDutyCycle(Stop)
 
-stop()
+# Turn Right
+def Right():
+  pwmMotorAForwards.ChangeDutyCycle(DutyCycleA)
+  pwmMotorABackwards.ChangeDutyCycle(Stop)
+  pwmMotorBForwards.ChangeDutyCycle(Stop)
+  pwmMotorBBackwards.ChangeDutyCycle(DutyCycleB)
+
+Forwards()
+time.sleep(1) # Pause for 1 second
+
+Forwards()
+time.sleep(1) # Pause for 1 second
+
+StopMotors()
+GPIO.cleanup()
 
 #
 # Line follower control
@@ -95,6 +121,7 @@ print("Ultrasonic Measurement")
 # Set pins as output and input
 GPIO.setup(pinTrigger, GPIO.OUT) # Trigger
 GPIO.setup(pinEcho, GPIO.IN) # Echo
+'''
 try:
   # Repeat the next indented block forever
   while True:
@@ -134,3 +161,4 @@ try:
 except KeyboardInterrupt:
   # Reset GPIO settings
   GPIO.cleanup()
+'''
