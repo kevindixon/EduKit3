@@ -10,16 +10,16 @@ GPIO.setwarnings(False)
 #
 
 # Set variables for the GPIO motor pins
-pinMotorAForwards = 10
-pinMotorABackwards = 9
-pinMotorBForwards = 7
-pinMotorBBackwards = 8
+pinMotorAForwards = 9
+pinMotorABackwards = 10
+pinMotorBForwards = 8
+pinMotorBBackwards = 7
 
 # How many times to turn the pin on and off each second
 Frequency = 20
 # How long the pin stays on each cycle, as a percent
 DutyCycleA = 30
-DutyCycleB = 30
+DutyCycleB = 27
 # Setting the duty cycle to 0 means the motors will not turn
 Stop = 0
 
