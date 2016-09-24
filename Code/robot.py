@@ -12,7 +12,7 @@ class Robot:
     PIN_MOTOR_B_BACKWARDS = 7
 
     # Setting the duty cycle to 0 means the motors will not turn
-    Robot.STOP = 0
+    STOP = 0
 
     def __init__(self):
         # Set the GPIO modes
