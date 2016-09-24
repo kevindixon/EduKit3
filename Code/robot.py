@@ -50,15 +50,15 @@ class Robot:
         self.dutyCycleB = dutyCycle
 
     def setPwmFrequency(self, frequency):
-        self.pwmMotorAForwards.start(Robot.STOP)
-        self.pwmMotorABackwards.start(Robot.STOP)
-        self.pwmMotorBForwards.start(Robot.STOP)
-        self.pwmMotorBBackwards.start(Robot.STOP)
         # Set the GPIO to software PWM at 'frequency' Hertz
         self.pwmMotorAForwards = GPIO.PWM(Robot.PIN_MOTOR_A_FORWARDS, frequency)
         self.pwmMotorABackwards = GPIO.PWM(Robot.PIN_MOTOR_A_BACKWARDS, frequency)
         self.pwmMotorBForwards = GPIO.PWM(Robot.PIN_MOTOR_B_FORWARDS, frequency)
         self.pwmMotorBBackwards = GPIO.PWM(Robot.PIN_MOTOR_B_BACKWARDS, frequency)
+        self.pwmMotorAForwards.start(Robot.STOP)
+        self.pwmMotorABackwards.start(Robot.STOP)
+        self.pwmMotorBForwards.start(Robot.STOP)
+        self.pwmMotorBBackwards.start(Robot.STOP)
 
     def stopMotors(self):
         # Turn all motors off
