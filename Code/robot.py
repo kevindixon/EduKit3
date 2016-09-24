@@ -12,7 +12,7 @@ class Robot:
     PIN_MOTOR_B_BACKWARDS = 7
 
     # Setting the duty cycle to 0 means the motors will not turn
-    STOP = 0
+    Robot.STOP = 0
 
     def __init__(self):
         # Set the GPIO modes
@@ -21,10 +21,10 @@ class Robot:
 
         # Motors
         # Set the GPIO Pin mode
-        GPIO.setup(PIN_MOTOR_A_FORWARDS, GPIO.OUT)
-        GPIO.setup(PIN_MOTOR_A_BACKWARDS, GPIO.OUT)
-        GPIO.setup(PIN_MOTOR_B_FORWARDS, GPIO.OUT)
-        GPIO.setup(PIN_MOTOR_B_BACKWARDS, GPIO.OUT)
+        GPIO.setup(Robot.PIN_MOTOR_A_FORWARDS, GPIO.OUT)
+        GPIO.setup(Robot.PIN_MOTOR_A_BACKWARDS, GPIO.OUT)
+        GPIO.setup(Robot.PIN_MOTOR_B_FORWARDS, GPIO.OUT)
+        GPIO.setup(Robot.PIN_MOTOR_B_BACKWARDS, GPIO.OUT)
 
         # How many times to turn the pin on and off each second
         self.setPwmFrequency(20)
@@ -32,13 +32,13 @@ class Robot:
         self.setDutyCycleB(27)
 
         # Start with a duty cycle of 0 (i.e. not moving)
-        self.pwmMotorAForwards.start(STOP)
-        self.pwmMotorABackwards.start(STOP)
-        self.pwmMotorBForwards.start(STOP)
-        self.pwmMotorBBackwards.start(STOP)
+        self.pwmMotorAForwards.start(Robot.STOP)
+        self.pwmMotorABackwards.start(Robot.STOP)
+        self.pwmMotorBForwards.start(Robot.STOP)
+        self.pwmMotorBBackwards.start(Robot.STOP)
 
     def __del__(self):
-        stopMotors()
+        self.stopMotors()
         GPIO.cleanup()
 
     def setDutyCycleA(self, dutyCycle):
@@ -53,42 +53,42 @@ class Robot:
         # Set the GPIO to software PWM at 'frequency' Hertz
         self.pwmMotorAForwards = GPIO.PWM(PIN_MOTOR_A_FORWARDS, self.pwmFrequency)
         self.pwmMotorABackwards = GPIO.PWM(PIN_MOTOR_A_BACKWARDS, self.pwmFrequency)
-        self.pwmMotorBForwards = GPIO.PWM(PIN_MOTOR_B_FORWARDS, self.pwmFrequency)
-        self.pwmMotorBBackwards = GPIO.PWM(PIN_MOTOR_B_BACKWARDS, self.pwmFrequency)
+        self.pwmMotorBForwards = GPIO.PWM(Robot.PIN_MOTOR_B_FORWARDS, self.pwmFrequency)
+        self.pwmMotorBBackwards = GPIO.PWM(Robot.PIN_MOTOR_B_BACKWARDS, self.pwmFrequency)
 
     def stopMotors(self):
         # Turn all motors off
-        self.pwmMotorAForwards.ChangeDutyCycle(STOP)
-        self.pwmMotorABackwards.ChangeDutyCycle(STOP)
-        self.pwmMotorBForwards.ChangeDutyCycle(STOP)
-        self.pwmMotorBBackwards.ChangeDutyCycle(STOP)
+        self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
+        self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
+        self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
+        self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
     def forwards():
         # Turn both motors forwards
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
-        self.pwmMotorABackwards.ChangeDutyCycle(STOP)
+        self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
-        self.pwmMotorBBackwards.ChangeDutyCycle(STOP)
+        self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
     def backwards():
         # Turn both motors backwards
-        self.pwmMotorAForwards.ChangeDutyCycle(STOP)
+        self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
-        self.pwmMotorBForwards.ChangeDutyCycle(STOP)
+        self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
 
     def left(self):
         # Turn left
-        self.pwmMotorAForwards.ChangeDutyCycle(STOP)
+        self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
-        self.pwmMotorBBackwards.ChangeDutyCycle(STOP)
+        self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
     def right():
         # Turn Right
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
-        self.pwmMotorABackwards.ChangeDutyCycle(STOP)
-        self.pwmMotorBForwards.ChangeDutyCycle(STOP)
+        self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
+        self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
 
 #
