@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+import threading
+from collections import deque
 
 class Robot:
 
@@ -25,6 +27,10 @@ class Robot:
     PIN_ULTRASOUND_ECHO = 18
 
     def __init__(self):
+        # Set up command queue
+        self.commandQueue = deque()
+        self.commandThread = threading.Thread(target = self._serviceQueue)
+
         # Set the GPIO modes
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -60,6 +66,24 @@ class Robot:
         self.stopMotors()
         GPIO.cleanup()
 
+    def _addToCommandQueue(self, func, args, kwargs):
+        self.commandQueue.appendLeft((func, args, kwargs))
+        self._serviceQueue()
+
+    def _serviceQueue(self):
+        print("_serviceQueue starting")
+        while True:
+            try:
+                func, arg, kwargs = self.commandQueue.pop()
+                func(*args, **kwargs)
+                print("Running command %s" % func.__name__)
+            except IndexError:
+                break;
+        print("_serviceQueue end")
+
+    def _startQueue(self):
+        self.commandThread.start()
+
     def setDutyCycleA(self, dutyCycle):
         # How long the pin stays on each cycle, as a percent
         self.dutyCycleA = dutyCycle
@@ -79,6 +103,9 @@ class Robot:
         self.pwmMotorBForwards.start(Robot.STOP)
         self.pwmMotorBBackwards.start(Robot.STOP)
 
+    def addStopMotorsCommand(self):
+        self._addToCommandQueue(self.stopMotors)
+
     def stopMotors(self):
         # Turn all motors off
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
@@ -86,12 +113,18 @@ class Robot:
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
+    def addForwardsCommand(self):
+        self._addToCommandQueue(self.forwards)
+
     def forwards(self):
         # Turn both motors forwards
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
+
+    def addBackwardsCommand(self):
+        self._addToCommandQueue(self.backwards)
 
     def backwards(self):
         # Turn both motors backwards
