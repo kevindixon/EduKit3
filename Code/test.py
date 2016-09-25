@@ -1,5 +1,6 @@
 import unittest
 import time
+from datetime import datetime, timedelta
 from mock import patch, call, MagicMock
 
 # Mock out the RPi module for test purposes
@@ -20,14 +21,26 @@ class TestRobot(unittest.TestCase):
         bot.addForwardsCommand()
         self.assertEqual(bot.commandQueueLength(), 2)
 
-    def test_runCommands(self):
+    def test_runCommandQueue(self):
         bot = robot.Robot()
         bot.addStopMotorsCommand()
         bot.addForwardsCommand()
-        bot.addForwardsCommand()
+        bot.addLeftCommand()
+        bot.addRightCommand()
+        bot.addBackwardsCommand()
+#        print("\n".join("{}, {}, {}".format(f.__name__, a, k) for f, a, k in bot.getQueue()))
         bot.startQueue()
         self.assertTrue(bot.isQueueActive())
 
+    def test_commandWithDelay(self):
+        bot = robot.Robot()
+        bot.addForwardsCommand(seconds = 2)
+        start = datetime.now()
+        bot.startQueue()
+        while bot.isQueueActive():
+            time.sleep(0.01)
+        delta = datetime.now() - start
+        self.assertTrue(delta > timedelta(seconds = 2))
 
 def main():
     unittest.main()

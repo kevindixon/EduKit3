@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
 import threading
 from collections import deque
 
@@ -86,6 +87,12 @@ class Robot:
     def isQueueActive(self):
         return self.commandThread.isAlive()
 
+    def getQueue(self):
+        commands = []
+        for cmd, args, kwargs in self.commandQueue:
+            commands.append((cmd, args, kwargs))
+        return commands
+
     def setDutyCycleA(self, dutyCycle):
         # How long the pin stays on each cycle, as a percent
         self.dutyCycleA = dutyCycle
@@ -115,39 +122,49 @@ class Robot:
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
-    def addForwardsCommand(self):
-        self._addToCommandQueue(self.forwards)
+    def addForwardsCommand(self, seconds = 1):
+        self._addToCommandQueue(self.forwards, kwargs={'seconds': seconds})
 
-    def forwards(self):
+    def forwards(self, seconds = 1):
         # Turn both motors forwards
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
+        time.sleep(seconds)
 
     def addBackwardsCommand(self):
         self._addToCommandQueue(self.backwards)
 
-    def backwards(self):
+    def backwards(self, seconds = 1):
         # Turn both motors backwards
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
+        time.sleep(seconds)
 
-    def left(self):
+    def addLeftCommand(self, seconds = 1):
+        self._addToCommandQueue(self.left, kwargs={'seconds': seconds})
+
+    def left(self, seconds = 1):
         # Turn left
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
+        time.sleep(seconds)
 
-    def right(self):
+    def addRightCommand(self, seconds = 1):
+        self._addToCommandQueue(self.right, kwargs={'seconds': seconds})
+
+    def right(self, seconds = 1):
         # Turn Right
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
+        time.sleep(seconds)
 
     #
     # Line follower
