@@ -66,23 +66,25 @@ class Robot:
         self.stopMotors()
         GPIO.cleanup()
 
-    def _addToCommandQueue(self, func, args, kwargs):
-        self.commandQueue.appendLeft((func, args, kwargs))
-        self._serviceQueue()
+    def commandQueueLength(self):
+        return len(self.commandQueue)
+
+    def _addToCommandQueue(self, func, args=None, kwargs=None):
+        self.commandQueue.appendleft((func, args, kwargs))
 
     def _serviceQueue(self):
-        print("_serviceQueue starting")
         while True:
             try:
-                func, arg, kwargs = self.commandQueue.pop()
-                func(*args, **kwargs)
-                print("Running command %s" % func.__name__)
+                func, args, kwargs = self.commandQueue.pop()
+                func(*(args or []), **(kwargs or {}))
             except IndexError:
                 break;
-        print("_serviceQueue end")
 
-    def _startQueue(self):
+    def startQueue(self):
         self.commandThread.start()
+
+    def isQueueActive(self):
+        return self.commandThread.isAlive()
 
     def setDutyCycleA(self, dutyCycle):
         # How long the pin stays on each cycle, as a percent
