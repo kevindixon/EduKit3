@@ -233,7 +233,7 @@ class Robot:
 
     def patrol(self):
         # Stop the command queue if it is active
-        if isQueueActive:
+        if self.isQueueActive:
             self.stopQueue = True
         # Patrol
         try:
