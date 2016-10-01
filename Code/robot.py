@@ -52,7 +52,7 @@ class Robot:
         # How many times to turn the pin on and off each second
         self.setPwmFrequency(20)
         self.setDutyCycleA(30)
-        self.setDutyCycleB(27)
+        self.setDutyCycleB(29)
 
         # Start with a duty cycle of 0 (i.e. not moving)
         self.pwmMotorAForwards.start(Robot.STOP)
@@ -161,10 +161,10 @@ class Robot:
         time.sleep(seconds)
         self.stopMotors()
 
-    def addLeftCommand(self, seconds = None):
-        self._addToCommandQueue(self.left, kwargs={'seconds': seconds})
+    def addRightCommand(self, seconds = None):
+        self._addToCommandQueue(self.right, kwargs={'seconds': seconds})
 
-    def left(self, seconds = None):
+    def right(self, seconds = None):
         # Turn left
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
@@ -175,10 +175,10 @@ class Robot:
         time.sleep(seconds)
         self.stopMotors()
 
-    def addRightCommand(self, seconds = None):
-        self._addToCommandQueue(self.right, kwargs={'seconds': seconds})
+    def addLeftCommand(self, seconds = None):
+        self._addToCommandQueue(self.left, kwargs={'seconds': seconds})
 
-    def right(self, seconds = None):
+    def left(self, seconds = None):
         # Turn Right
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
@@ -204,10 +204,6 @@ class Robot:
     #
 
     def getObstacleDistance(self):
-      # Set trigger to False (Low)
-#      GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
-      # Allow module to settle
-#      time.sleep(0.1)
       # Send 10us pulse to trigger
       GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, True)
       time.sleep(0.00001)
