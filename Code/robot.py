@@ -35,8 +35,8 @@ class Robot:
         # Set up command queue
         self.commandQueue = deque()
         self.commandThread = threading.Thread(target = self._serviceQueue)
-        self.stopQueue = False
-        self.isPatrolling = False
+        self.stopQueue = True
+        self.stopPatrol = True
 
         # Set the GPIO modes
         GPIO.setmode(GPIO.BCM)
@@ -91,7 +91,6 @@ class Robot:
 
     def startQueue(self):
         self.stopQueue = False
-        self.isPatrolling = False
         self.commandThread.start()
 
     def isQueueActive(self):
@@ -234,10 +233,13 @@ class Robot:
         self.stopMotors()
 
     def patrol(self):
+        self.stopPatrol = False
         self._addToCommandQueue(self._patrol)
 
+    def stopPatrol(self):
+        self.stopPatrol = True
+
     def _patrol(self):
-        self.isPatrolling = True
         # Stop the command queue if it is active
 #        if self.isQueueActive:
 #            self.stopQueue = True
@@ -248,9 +250,9 @@ class Robot:
             # Allow module to settle
             time.sleep(0.1)
             while True:
-                self.forwards()
-                if not self.isPatrolling:
+                if self.stopPatrol:
                     break
+                self.forwards()
                 time.sleep(0.05)
                 if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
                     self.stopMotors()
