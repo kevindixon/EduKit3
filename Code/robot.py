@@ -238,7 +238,7 @@ class Robot:
         # Patrol
         try:
             # Set trigger to False (Low)
-            GPIO.output(PIN_ULTRASOUND_TRIGGER, False)
+            GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
             # Allow module to settle
             time.sleep(0.1)
             while true:
