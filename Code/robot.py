@@ -27,10 +27,15 @@ class Robot:
     PIN_ULTRASOUND_TRIGGER = 17
     PIN_ULTRASOUND_ECHO = 18
 
+    OBSTACLE_DISTANCE_THREADHOLD_CM = 15.0
+    OBSTACLE_AVOID_REVERSE_TIME_S = 0.5
+    OBSTACLE_AVOID_TURN_TIME_S = 0.75
+
     def __init__(self):
         # Set up command queue
         self.commandQueue = deque()
         self.commandThread = threading.Thread(target = self._serviceQueue)
+        self.stopQueue = False
 
         # Set the GPIO modes
         GPIO.setmode(GPIO.BCM)
@@ -75,6 +80,8 @@ class Robot:
 
     def _serviceQueue(self):
         while True:
+            if self.stopQueue:
+                return
             try:
                 func, args, kwargs = self.commandQueue.pop()
                 func(*(args or []), **(kwargs or {}))
@@ -82,6 +89,7 @@ class Robot:
                 break;
 
     def startQueue(self):
+        self.stopQueue = False
         self.commandThread.start()
 
     def isQueueActive(self):
@@ -182,25 +190,27 @@ class Robot:
 
     def getObstacleDistance(self):
       # Set trigger to False (Low)
-      GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
+#      GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
       # Allow module to settle
-      time.sleep(0.1)
+#      time.sleep(0.1)
       # Send 10us pulse to trigger
       GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, True)
       time.sleep(0.00001)
       GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
       # Start the timer
       StartTime = time.time()
+      StopTime = StartTime
       # The start time is reset until the Echo pin is taken high (==1)
       while GPIO.input(Robot.PIN_ULTRASOUND_ECHO)==0:
           StartTime = time.time()
+          StopTime = StartTime
       # Stop when the Echo pin is no longer high - the end time
       while GPIO.input(Robot.PIN_ULTRASOUND_ECHO)==1:
-          StopTime = time.time()
-          # If the sensor is too close to an object, the Pi cannot
-          # see the echo quickly enough, so it has to detect that
-          # problem and say what has happened
-          if StopTime-StartTime >= 0.04:
+        StopTime = time.time()
+        # If the sensor is too close to an object, the Pi cannot
+        # see the echo quickly enough, so it has to detect that
+        # problem and say what has happened
+        if StopTime - StartTime >= 0.04:
             return 0
       # Calculate pulse length
       elapsedTime = StopTime - StartTime
@@ -211,3 +221,31 @@ class Robot:
       distance = distance / 2
       return distance
 
+    def avoidObstacle(self):
+        # Back off a little
+        self.backwards()
+        time.sleep(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
+        self.stopMotors()
+        # Turn right
+        self.right()
+        time.sleep(Robot.OBSTACLE_AVOID_TURN_TIME_S)
+        self.stopMotors()
+
+    def patrol(self):
+        # Stop the command queue if it is active
+        if isQueueActive:
+            self.stopQueue = True
+        # Patrol
+        try:
+            # Set trigger to False (Low)
+            GPIO.output(pinTrigger, False)
+            # Allow module to settle
+            time.sleep(0.1)
+            while true:
+                self.forwards()
+                time.sleep(0.1)
+                if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
+                    self.stopMotors()
+                    self.avoidObstacle()
+        except KeyboardInterrupt:
+            GPIO.cleanup()
