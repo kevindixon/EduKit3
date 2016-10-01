@@ -234,10 +234,13 @@ class Robot:
         self.stopMotors()
 
     def patrol(self):
+        self._addToCommandQueue(self._patrol)
+
+    def _patrol(self):
         self.isPatrolling = True
         # Stop the command queue if it is active
-        if self.isQueueActive:
-            self.stopQueue = True
+#        if self.isQueueActive:
+#            self.stopQueue = True
         # Patrol
         try:
             # Set trigger to False (Low)
@@ -254,4 +257,4 @@ class Robot:
                     self.avoidObstacle()
         except KeyboardInterrupt:
             pass
-        GPIO.cleanup()
+#        GPIO.cleanup()
