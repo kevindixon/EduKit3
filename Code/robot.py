@@ -29,7 +29,7 @@ class Robot:
 
     OBSTACLE_DISTANCE_THREADHOLD_CM = 15.0
     OBSTACLE_AVOID_REVERSE_TIME_S = 0.5
-    OBSTACLE_AVOID_TURN_TIME_S = 0.75
+    OBSTACLE_AVOID_TURN_TIME_S = 0.25
 
     def __init__(self):
         # Set up command queue
@@ -243,7 +243,7 @@ class Robot:
             time.sleep(0.1)
             while True:
                 self.forwards()
-                time.sleep(0.1)
+                time.sleep(0.05)
                 if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
                     self.stopMotors()
                     self.avoidObstacle()
