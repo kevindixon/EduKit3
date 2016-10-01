@@ -241,7 +241,7 @@ class Robot:
             GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
             # Allow module to settle
             time.sleep(0.1)
-            while true:
+            while True:
                 self.forwards()
                 time.sleep(0.1)
                 if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
