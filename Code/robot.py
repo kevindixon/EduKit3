@@ -90,6 +90,8 @@ class Robot:
                 break;
 
     def startQueue(self):
+        if self.isQueueActive():
+            return;
         self.stopQueue = False
         self.commandThread.start()
 
@@ -131,48 +133,56 @@ class Robot:
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
 
-    def addForwardsCommand(self, seconds = 1):
+    def addForwardsCommand(self, seconds = None):
         self._addToCommandQueue(self.forwards, kwargs={'seconds': seconds})
 
-    def forwards(self, seconds = 1):
+    def forwards(self, seconds = None):
         # Turn both motors forwards
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
+        if not seconds:
+            return
         time.sleep(seconds)
 
     def addBackwardsCommand(self):
         self._addToCommandQueue(self.backwards)
 
-    def backwards(self, seconds = 1):
+    def backwards(self, seconds = None):
         # Turn both motors backwards
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
+        if not seconds:
+            return
         time.sleep(seconds)
 
-    def addLeftCommand(self, seconds = 1):
+    def addLeftCommand(self, seconds = None):
         self._addToCommandQueue(self.left, kwargs={'seconds': seconds})
 
-    def left(self, seconds = 1):
+    def left(self, seconds = None):
         # Turn left
         self.pwmMotorAForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorABackwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorBForwards.ChangeDutyCycle(self.dutyCycleB)
         self.pwmMotorBBackwards.ChangeDutyCycle(Robot.STOP)
+        if not seconds:
+            return
         time.sleep(seconds)
 
-    def addRightCommand(self, seconds = 1):
+    def addRightCommand(self, seconds = None):
         self._addToCommandQueue(self.right, kwargs={'seconds': seconds})
 
-    def right(self, seconds = 1):
+    def right(self, seconds = None):
         # Turn Right
         self.pwmMotorAForwards.ChangeDutyCycle(self.dutyCycleA)
         self.pwmMotorABackwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBForwards.ChangeDutyCycle(Robot.STOP)
         self.pwmMotorBBackwards.ChangeDutyCycle(self.dutyCycleB)
+        if not seconds:
+            return
         time.sleep(seconds)
 
     #
@@ -236,14 +246,10 @@ class Robot:
         self.stopPatrol = False
         self._addToCommandQueue(self._patrol)
 
-    def stopPatrol(self):
+    def completePatrol(self):
         self.stopPatrol = True
 
     def _patrol(self):
-        # Stop the command queue if it is active
-#        if self.isQueueActive:
-#            self.stopQueue = True
-        # Patrol
         try:
             # Set trigger to False (Low)
             GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
