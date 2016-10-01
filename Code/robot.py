@@ -145,6 +145,7 @@ class Robot:
         if not seconds:
             return
         time.sleep(seconds)
+        self.stopMotors()
 
     def addBackwardsCommand(self):
         self._addToCommandQueue(self.backwards)
@@ -158,6 +159,7 @@ class Robot:
         if not seconds:
             return
         time.sleep(seconds)
+        self.stopMotors()
 
     def addLeftCommand(self, seconds = None):
         self._addToCommandQueue(self.left, kwargs={'seconds': seconds})
@@ -171,6 +173,7 @@ class Robot:
         if not seconds:
             return
         time.sleep(seconds)
+        self.stopMotors()
 
     def addRightCommand(self, seconds = None):
         self._addToCommandQueue(self.right, kwargs={'seconds': seconds})
@@ -184,6 +187,7 @@ class Robot:
         if not seconds:
             return
         time.sleep(seconds)
+        self.stopMotors()
 
     #
     # Line follower
