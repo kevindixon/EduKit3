@@ -234,13 +234,16 @@ class Robot:
 
     def avoidObstacle(self):
         # Back off a little
-        self.backwards()
-        time.sleep(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
-        self.stopMotors()
+        self.backwards(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
         # Turn right
-        self.right()
-        time.sleep(Robot.OBSTACLE_AVOID_TURN_TIME_S)
-        self.stopMotors()
+        self.right(Robot.OBSTACLE_AVOID_TURN_TIME_S)
+        rightDistance = self.getObstacleDistance()
+        # Turn back to the left
+        self.left(Robot.OBSTACLE_AVOID_TURN_TIME_S * 2)
+        leftDistance = self.getObstacleDistance()
+        if leftDistance > rightDistance:
+            return
+        self.right(Robot.OBSTACLE_AVOID_TURN_TIME_S * 2)
 
     def patrol(self):
         self.stopPatrol = False
