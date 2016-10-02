@@ -29,7 +29,8 @@ class Robot:
 
     OBSTACLE_DISTANCE_THREADHOLD_CM = 15.0
     OBSTACLE_AVOID_REVERSE_TIME_S = 0.5
-    OBSTACLE_AVOID_TURN_TIME_S = 0.4
+    OBSTACLE_AVOID_TURN_TIME_S = 0.5
+    OBSTACLE_AVOID_TURN_TIME_VARIANCE_S = 0.2
 
     def __init__(self):
         # Set up command queue
@@ -232,20 +233,27 @@ class Robot:
       distance = distance / 2
       return distance
 
-    def avoidObstacle(self):
+    def _getRandomTurnTime(self):
+        return random.uniform(
+                       Robot.OBSTACLE_AVOID_TURN_TIME_S - Robot.BSTACLE_AVOID_TURN_TIME_VARIANCE_S,
+                       Robot.OBSTACLE_AVOID_TURN_TIME_S + Robot.BSTACLE_AVOID_TURN_TIME_VARIANCE_S)
+
+    def _avoidObstacle(self):
         # Back off a little
         self.backwards(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
+        # Get a varied turn time
         # Turn right
-        self.right(Robot.OBSTACLE_AVOID_TURN_TIME_S)
+        turnTime = self._getRandomTurnTime()
+        self.right(turnTime)
         rightDistance = self.getObstacleDistance()
         # Turn back to the left
-        self.left(Robot.OBSTACLE_AVOID_TURN_TIME_S * 2)
+        self.left(turnTime * 2)
         leftDistance = self.getObstacleDistance()
         if leftDistance > rightDistance:
             return
-        self.right(Robot.OBSTACLE_AVOID_TURN_TIME_S * 2)
+        self.right(turnTime * 2)
 
-    def patrol(self):
+    def addPatrolCommand(self):
         self.stopPatrol = False
         self._addToCommandQueue(self._patrol)
 
@@ -253,19 +261,15 @@ class Robot:
         self.stopPatrol = True
 
     def _patrol(self):
-        try:
-            # Set trigger to False (Low)
-            GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
-            # Allow module to settle
-            time.sleep(0.1)
-            while True:
-                if self.stopPatrol:
-                    break
-                self.forwards()
-                time.sleep(0.25)
-                if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
-                    self.stopMotors()
-                    self.avoidObstacle()
-        except KeyboardInterrupt:
-            pass
-#        GPIO.cleanup()
+        # Set trigger to False (Low)
+        GPIO.output(Robot.PIN_ULTRASOUND_TRIGGER, False)
+        # Allow module to settle
+        time.sleep(0.1)
+        while True:
+            if self.stopPatrol:
+                break
+            self.forwards()
+            time.sleep(0.25)
+            if self.getObstacleDistance() < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM:
+                self.stopMotors()
+                self._avoidObstacle()
