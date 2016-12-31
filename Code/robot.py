@@ -27,9 +27,9 @@ class Robot:
     PIN_ULTRASOUND_TRIGGER = 17
     PIN_ULTRASOUND_ECHO = 18
 
-    OBSTACLE_DISTANCE_THREADHOLD_CM = 15.0
+    OBSTACLE_DISTANCE_THREADHOLD_CM = 35.0
     OBSTACLE_AVOID_REVERSE_TIME_S = 0.5
-    OBSTACLE_AVOID_TURN_TIME_S = 0.5
+    OBSTACLE_AVOID_TURN_TIME_S = 0.6
     OBSTACLE_AVOID_TURN_TIME_VARIANCE_S = 0.2
 
     def __init__(self):
@@ -239,16 +239,18 @@ class Robot:
                        Robot.OBSTACLE_AVOID_TURN_TIME_S + Robot.BSTACLE_AVOID_TURN_TIME_VARIANCE_S)
 
     def _avoidObstacle(self):
-        # Back off a little
-        self.backwards(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
         # Get a varied turn time
-        # Turn right
         turnTime = self._getRandomTurnTime()
-        self.right(turnTime)
-        rightDistance = self.getObstacleDistance()
-        # Turn back to the left
-        self.left(turnTime * 2)
-        leftDistance = self.getObstacleDistance()
+        while (leftDistance < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM) and (rightDistance < Robot.OBSTACLE_DISTANCE_THREADHOLD_CM):
+            # Back off a little
+            self.backwards(Robot.OBSTACLE_AVOID_REVERSE_TIME_S)
+            # Turn right
+            self.right(turnTime)
+            rightDistance = self.getObstacleDistance()
+            # Turn back to the left
+            self.left(turnTime * 2)
+            leftDistance = self.getObstacleDistance()
+
         if leftDistance > rightDistance:
             return
         self.right(turnTime * 2)
