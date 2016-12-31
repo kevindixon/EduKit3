@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 import threading
 from collections import deque
+import random
 
 class Robot:
 
@@ -235,8 +236,8 @@ class Robot:
 
     def _getRandomTurnTime(self):
         return random.uniform(
-                       Robot.OBSTACLE_AVOID_TURN_TIME_S - Robot.BSTACLE_AVOID_TURN_TIME_VARIANCE_S,
-                       Robot.OBSTACLE_AVOID_TURN_TIME_S + Robot.BSTACLE_AVOID_TURN_TIME_VARIANCE_S)
+                       Robot.OBSTACLE_AVOID_TURN_TIME_S - Robot.OBSTACLE_AVOID_TURN_TIME_VARIANCE_S,
+                       Robot.OBSTACLE_AVOID_TURN_TIME_S + Robot.OBSTACLE_AVOID_TURN_TIME_VARIANCE_S)
 
     def _avoidObstacle(self):
         # Get a varied turn time
